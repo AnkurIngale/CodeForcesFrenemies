@@ -64,8 +64,7 @@
                     <h5 class="card-title">
                         Filter Problems
                     </h5>
-                    <form method="POST" action = "{% url 'showSolvedProblems' %}" class = "form">
-                        {% csrf_token %}
+                    <form method="GET" action = "{% url 'showSolvedProblems' %}" class = "form">
                         <input type = "text" name = "lbr" class = "form-control" aria-label = "Small" placeholder = "Lower Rating Bound"/>
                         <input type = "text" name = "hbr" class = "form-control" aria-label = "Small" placeholder = "Higher Rating Bound"/>
                         <input type = "submit" class = "btn btn-primary align-center" value = "Filter" style = "margin-top: 1rem;"/>
@@ -75,4 +74,18 @@
         </td>
     </tr>
 </table>
+
+<ul class = "pagination">
+    {% for page in paginator.page_range %}
+    {% if 'lbr' in request.GET or 'hbr' in request.GET %}
+    <li>
+        <a class = "page-link" href = "?lbr={{ request.GET.lbr }}&hbr={{ request.GET.hbr }}&page={{ page }}">{{ page }}</a>
+    </li>
+    {% else %}
+    <li>
+        <a class = "page-link" href = "?page={{ page }}">{{ page }}</a>
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
 {% endblock content %}

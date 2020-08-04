@@ -1,12 +1,13 @@
 from django.shortcuts import render , redirect
 from django.http import HttpResponse
-from .api import verifyHandle
-from .addons import getAllProblemsNotSolvedByUserButSolvedByFriends
+from django.contrib import auth , messages
 from django.conf import settings
 from django.db import models
+from django.core.paginator import Paginator
+from .api import verifyHandle
+from .addons import getAllProblemsNotSolvedByUserButSolvedByFriends
 from .models import User , User_Friend
 from .forms import *
-from django.contrib import auth , messages
 import json
 import time
 
@@ -83,10 +84,10 @@ def showSolvedProblems(request):
     
     global problemDict
     global listLastUpdated
-
-    handle = request.user.handle
     
     if request.user.is_authenticated:
+
+        handle = request.user.handle
 
         if handle not in listLastUpdated:
             listLastUpdated[handle] = 0
@@ -104,28 +105,41 @@ def showSolvedProblems(request):
             else:
                 return HttpResponse('Either we could not load data or you are all caught up. Try adding more friends.')
 
-        tempProbList = problemDict[handle][:]
+        tempProbList = problemDict[handle]
+        
+        lowerBoundRating = request.GET.get('lbr', 0)
+        higherBoundRating = request.GET.get('hbr', 5000)
 
-        if request.method == 'POST':
-            lowerBoundRating = request.POST.get('lbr')
-            higherBoundRating = request.POST.get('hbr')
+        try:
+    
+            lowerBoundRating = int(lowerBoundRating)
+            higherBoundRating = int(higherBoundRating)
+            
+            to_remove = []
+            for problem in tempProbList:
+                if problem.rating < lowerBoundRating or problem.rating > higherBoundRating:
+                    to_remove.append(problem)
+            
+            for problem in to_remove:
+                tempProbList.remove(problem)
 
-            try:
-                lowerBoundRating = int(lowerBoundRating)
-                higherBoundRating = int(higherBoundRating)
-
-                to_remove = []
-                for problem in tempProbList:
-                    if problem.rating < lowerBoundRating or problem.rating > higherBoundRating:
-                        to_remove.append(problem)
-                
-                for problem in to_remove:
-                    tempProbList.remove(problem)
-            except:
-                pass
+        except:
+            pass
         
         print(listLastUpdated)
-        return render(request, template_name = 'cfFrenemies/showsolvedproblems.html', context = {'problemList' : tempProbList})
+
+        paginator = Paginator(tempProbList, per_page = 30)
+        page_number = request.GET.get('page', 1)
+        page = paginator.get_page(page_number)
+
+        return render(
+            request, 
+            template_name = 'cfFrenemies/showsolvedproblems.html', 
+            context = {
+                'problemList' : page.object_list,
+                'paginator': paginator
+                }
+            )
     else:
         return redirect('login')
 
