@@ -1,0 +1,33 @@
+{% extends "cfTrainer/layout.html" %}
+{% block content %}
+    <div>
+        <small>
+            <a href="{% url 'index' %}">Main Page</a>
+        </small>
+    </div>
+	<div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Log In</legend>
+                {{ form.as_p }}
+                 <!-- #this form is obtained from auth_views, the inbuilt login views in django -->
+            </fieldset>
+            {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Log In</button>
+            </div>
+        </form>
+        <div class="border-top pt-3">
+            <small class="text-muted">
+                Don't Have An Account? <a class="ml-2" href="{% url 'register' %}">Register Now</a>
+            </small>
+        </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+{% extends "cfTrainer/layout.html" %}
+{% block content %}
+<head>
+    <title>
+        Welcome
+    </title>
+</head>
+<body>
+    <h1 class = "h1">
+        Welcome to Codeforces Frenemies.
+    </h1>
+    
+    <p class = "p">
+        Here, you can get all the problems you didn't solve but your friends did. Hence frenemies!<br><br>
+        How does it work?<br>
+        1. Go to "Add friends to list" link and add your friends.<br>
+        2. Go to "Problem Set" to view the problems and filter according to difficulty.
+        <br><br>
+        Also, you can create your own "Dream Teams" where you can make a team of three.<br>
+        Then, the website will give you the stats of the team and how well they MIGHT perform.
+        <br>
+    </p>
+    {% if user.is_authenticated %}
+    <div>
+        <strong>User Handle :</strong> <a href = "https://codeforces.com/profile/{{ user.handle }}" 
+        style = "color:#000000" title = "Click to view profile" target="_blank">{{ user.handle }}</a>
+        <div>
+            <small class="text-muted">
+                <a class="ml-2" href="{% url 'logoutnin' %}">Not you?</a>
+            </small>
+        </div>
+    </div>
+    <div class = "border-bottom mb-4"></div>
+    <div>
+        <a href = "{% url 'addFriend' %}">Add Friends</a>
+    </div>
+    <div>
+        <a href = "{% url 'showSolvedProblems' %}">Problem Set</a>
+    </div>
+    <div>
+        <a href = "{% url 'createTeams' %}">Create Personal Teams</a>
+    </div>
+    <div>
+        <a href = "{% url 'logout' %}">Log Out</a>
+    </div>
+    {% else %}
+    <div>
+        <a href = "{% url 'login' %}">Login</a>
+    </div>
+    <div>
+        <a href = "{% url 'register' %}">Register</a>
+    </div>
+    {% endif %}
+</body>
+{% endblock content %}
