@@ -95,12 +95,11 @@ class User_Friend(models.Model):
         return self.friend_handle + ' ' + self.friend_of.handle
 
 class User_Team(models.Model):
-    creator_handle = models.CharField(max_length = 100)
+    creator_user = models.ForeignKey(User , on_delete=models.CASCADE , default = None)
     handle1 = models.CharField(max_length = 100)
     handle2 = models.CharField(max_length = 100)
     handle3 = models.CharField(max_length = 100)
 
     def __str__(self):
         a = [self.handle1, self.handle2, self.handle3]
-        a.sort()
         return ''.join(a)

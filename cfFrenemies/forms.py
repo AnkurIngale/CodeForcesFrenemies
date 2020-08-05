@@ -17,7 +17,7 @@ class UserAdminCreationForm(forms.ModelForm):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
-            raise forms.ValidationError("Passwords don't match")
+            raise forms.ValidationError("Passwords don't match.")
         return password2
 
     def clean_handle(self):
@@ -27,9 +27,9 @@ class UserAdminCreationForm(forms.ModelForm):
             user = User.objects.get(handle = c_handle)
         except User.DoesNotExist:
             if not verifyHandle(c_handle):
-                raise forms.ValidationError("Handle does not exist")
+                raise forms.ValidationError("Handle does not exist.")
         else:
-            raise forms.ValidationError("Handle already registered")
+            raise forms.ValidationError("Handle already registered.")
         return c_handle
 
     def save(self, commit=True):
@@ -64,7 +64,7 @@ class LoginForm(forms.Form):
         try:
             user = User.objects.get(handle = c_handle)
         except User.DoesNotExist:
-            raise forms.ValidationError('Handle not registered')
+            raise forms.ValidationError('Handle not registered.')
         return c_handle
 
 class AddFriendForm(forms.Form):
@@ -76,5 +76,31 @@ class AddFriendForm(forms.Form):
             user = User.objects.get(handle = c_handle)
         except User.DoesNotExist:
             if not verifyHandle(c_handle):
-                raise forms.ValidationError('Handle does not exist')
+                raise forms.ValidationError('Handle does not exist.')
+        
         return c_handle
+
+class CreateTeamForm(forms.Form):
+    handle1 = forms.CharField(label = 'First Member Handle', widget=forms.TextInput)
+    handle2 = forms.CharField(label = 'Second Member Handle', widget=forms.TextInput)
+    handle3 = forms.CharField(label = 'Third Member Handle', widget=forms.TextInput)
+
+    def clean(self):
+        super().clean()
+        c_handles = [
+            self.cleaned_data['handle1'], 
+            self.cleaned_data['handle2'], 
+            self.cleaned_data['handle3']
+        ]
+        c_handles.sort()
+        print(c_handles)
+
+        if len(set(c_handles)) < 3:
+            raise forms.ValidationError('Same handles in different inputs.')
+
+        for c_handle in c_handles:
+            try:
+                user = User.objects.get(handle = c_handle)
+            except User.DoesNotExist:
+                if not verifyHandle(c_handle):
+                    raise forms.ValidationError('Handle ' + c_handle + ' does not exist.')

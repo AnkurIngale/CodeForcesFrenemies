@@ -13,5 +13,6 @@ urlpatterns = [
     path('addfriend/', views.addFriend, name = 'addFriend'),
     path('delfriend/<friend_handle>', views.delFriend, name = 'delFriend'),
     path('logoutnin/',views.logoutnin, name = 'logoutnin'),
-    path('createteams/' , views.createTeams, name = 'createTeams'),
+    path('createteam/' , views.createTeam, name = 'createTeam'),
+    path('delteam?<handle1>&<handle2>&<handle3>/' , views.delTeam, name = 'delTeam'),
 ]

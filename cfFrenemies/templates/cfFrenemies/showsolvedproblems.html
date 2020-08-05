@@ -5,9 +5,12 @@
         <a href="{% url 'index' %}">Main Page</a>
     </small>
 </div>
+
+{% if problemList %}
 <h1>
     Problem Set
 </h1>
+
 <table>
     <tr>
         <td class = "col-10">
@@ -29,7 +32,6 @@
                         Solved By
                     </th>
                 </tr>
-                {% if problemList %}
                 {% for problem in problemList %}
                 <tr>
                     <td class = "col">
@@ -55,7 +57,6 @@
                     </td>
                 </tr>
                 {% endfor %}
-                {% endif %}
             </table>
         </td>
         <td class = "col-2 align-baseline">
@@ -74,6 +75,7 @@
         </td>
     </tr>
 </table>
+{% endif %}
 
 <ul class = "pagination">
     {% for page in paginator.page_range %}

@@ -7,7 +7,7 @@ from django.core.paginator import Paginator
 from django.core.cache import cache
 from .api import verifyHandle
 from .addons import getAllProblemsNotSolvedByUserButSolvedByFriends
-from .models import User , User_Friend
+from .models import User, User_Friend, User_Team
 from .forms import *
 import jsons
 import time
@@ -164,14 +164,60 @@ def delFriend(request , friend_handle):
     if request.user.is_authenticated:
         friend = User_Friend.objects.get(friend_handle = friend_handle , friend_of = request.user)
         friend.delete()
-    return redirect('addFriend')
+        return redirect('addFriend')
+    return redirect('login')
 
 def logoutnin(request):
     if request.user.is_authenticated:
         auth.logout(request)
         return redirect('login')
 
-def createTeams(request):
+def createTeam(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = CreateTeamForm(request.POST)
+            if form.is_valid():
+                handles = [
+                    form.cleaned_data.get('handle1'),
+                    form.cleaned_data.get('handle2'),
+                    form.cleaned_data.get('handle3')
+                ]
+                handles.sort()
+                try:
+                    user_team = User_Team.objects.get(
+                        creator_user = request.user, 
+                        handle1 = handles[0], 
+                        handle2 = handles[1], 
+                        handle3 = handles[2]
+                    )
+                except User_Team.DoesNotExist:
+                    user_team = User_Team(
+                        creator_user = request.user,
+                        handle1 = handles[0],
+                        handle2 = handles[1],
+                        handle3 = handles[2],
+                    )
+                    user_team.save()
+                    return redirect('createTeam')
+                else:
+                    messages.error(request , 'Team already created.')
+
+        else:
+            form = CreateTeamForm()
+        return render(request, template_name = 'cfFrenemies/createteam.html', context = {'form': form, 'teams': User_Team.objects.all()})
+    else:
+        redirect('login')
     pass
 
+def delTeam(request, handle1, handle2, handle3):
+    if request.user.is_authenticated:
+        team = User_Team.objects.get(
+            creator_user = request.user,
+            handle1 = handle1,
+            handle2 = handle2,
+            handle3 = handle3,
+        )
+        team.delete()
+        return redirect('createTeam')
+    return redirect('login')
 

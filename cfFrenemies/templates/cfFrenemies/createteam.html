@@ -1,0 +1,80 @@
+{% extends "cfFrenemies/layout.html" %}
+{% block content %}
+    <div>
+        <small>
+            <a href="{% url 'index' %}">Main Page</a>
+        </small>
+    </div>
+	<div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Create Team</legend>
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox" class="custom-control-input" id="firstHandleIsUser" onclick="onCheckClick()">
+                    <label class="custom-control-label" for="firstHandleIsUser">Add you as team member?</label>
+                </div>
+                <br>
+                {{ form.as_p }}
+                 <!-- #this form is obtained from auth_views, the inbuilt login views in django -->
+            </fieldset>
+            {% if messages %}
+            <ul class="messages">
+            {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit">Create</button>
+            </div>
+        </form>
+    </div>
+
+{% if teams %}
+<table class = "table table-striped">
+    <tr>
+        <th class = "th-lg">
+            Sr No.
+        </th>
+        <th class = "th-lg">
+            Member 1
+        </th>
+        <th class = "th-lg">
+            Member 2
+        </th>
+        <th class = "th-lg">
+            Member 3
+        </th>
+        <th class = "th-lg">
+        </th>
+        <th class = "th-lg">
+        </th>
+    </tr>
+    {% for team in teams %}
+    <tr>
+        <th class = "th-lg">
+            {{ forloop.counter }}
+        </th>
+        <th class = "th-lg">
+            {{ team.handle1 }}
+        </th>
+        <th class = "th-lg">
+            {{ team.handle2 }}
+        </th>
+        <th class = "th-lg">
+            {{ team.handle3 }}
+        </th>
+        <th class = "th-lg">
+            <a href="#" title = "Click to get team stats" 
+                style="color:#00FF00;font-weight:bold;">=></a>
+        </th>
+        <th class = "th-lg">
+            <a href="{% url 'delTeam' team.handle1 team.handle2 team.handle3 %}" title = "Click to remove this team" 
+                style="color:#FF0000;font-weight:bold;">X</a>
+        </th>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+{% endblock content %}

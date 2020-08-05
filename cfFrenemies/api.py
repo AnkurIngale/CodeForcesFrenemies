@@ -5,11 +5,7 @@ from .models import User_Friend, User
 def verifyHandle(handle):
     r = apicalls.get(settings.URL + 'user.info?handles=' + handle)
     rjson = r.json()
-    if rjson['status'] == 'OK':
-        rank = rjson['result'][0]['rank']
-        if rank:
-            return True
-    return False
+    return rjson['status'] == 'OK'
 
 class Problem:
 
