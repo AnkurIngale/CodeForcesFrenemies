@@ -4,15 +4,13 @@ from django.contrib import auth , messages
 from django.conf import settings
 from django.db import models
 from django.core.paginator import Paginator
+from django.core.cache import cache
 from .api import verifyHandle
 from .addons import getAllProblemsNotSolvedByUserButSolvedByFriends
 from .models import User , User_Friend
 from .forms import *
-import json
+import jsons
 import time
-
-problemDict = {}
-listLastUpdated = {}
 
 # Create your views here.
 def index(request):
@@ -82,31 +80,27 @@ def toProblem(request, contestID, problemID):
 
 def showSolvedProblems(request):
     
-    global problemDict
-    global listLastUpdated
-    
     if request.user.is_authenticated:
 
         handle = request.user.handle
 
-        if handle not in listLastUpdated:
-            listLastUpdated[handle] = 0
-        if handle not in problemDict:
-            problemDict[handle] = []
+        problemSet = cache.get(handle)
 
-        current_time = time.time()
-        
-        if not problemDict[handle] or (current_time - listLastUpdated[handle]) > settings.PROBLEMS_UPDATE_TIME:
+        if not problemSet:
             data = getAllProblemsNotSolvedByUserButSolvedByFriends(request.user)
-
             if data[0]:
-                problemDict[handle] = data[1]
-                listLastUpdated[handle] = time.time()
+
+                problemSet = data[1]
+                pjson = jsons.dump(problemSet)
+                cache.set(handle, pjson, settings.PROBLEMS_UPDATE_TIME)
+                print('Added in Cache')
+
             else:
                 return HttpResponse('Either we could not load data or you are all caught up. Try adding more friends.')
+        else:
+            problemSet = jsons.load(problemSet)
+            print('Retrieved from Cache')
 
-        tempProbList = problemDict[handle]
-        
         lowerBoundRating = request.GET.get('lbr', 0)
         higherBoundRating = request.GET.get('hbr', 5000)
 
@@ -116,19 +110,17 @@ def showSolvedProblems(request):
             higherBoundRating = int(higherBoundRating)
             
             to_remove = []
-            for problem in tempProbList:
-                if problem.rating < lowerBoundRating or problem.rating > higherBoundRating:
+            for problem in problemSet:
+                if problem['rating'] < lowerBoundRating or problem['rating'] > higherBoundRating:
                     to_remove.append(problem)
             
             for problem in to_remove:
-                tempProbList.remove(problem)
+                problemSet.remove(problem)
 
         except:
             pass
-        
-        print(listLastUpdated)
 
-        paginator = Paginator(tempProbList, per_page = 30)
+        paginator = Paginator(problemSet, per_page = 30)
         page_number = request.GET.get('page', 1)
         page = paginator.get_page(page_number)
 

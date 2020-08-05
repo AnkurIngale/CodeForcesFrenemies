@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cfFrenemies',
     'requests',
+    'jsons',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +80,13 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'cache_problem_table',
     }
 }
 
@@ -130,4 +138,4 @@ STATIC_URL = '/static/'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
-PROBLEMS_UPDATE_TIME = 24 * 60 * 60
+PROBLEMS_UPDATE_TIME = 6 * 60 * 60

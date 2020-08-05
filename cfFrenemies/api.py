@@ -4,9 +4,9 @@ from .models import User_Friend, User
 
 def verifyHandle(handle):
     r = apicalls.get(settings.URL + 'user.info?handles=' + handle)
-    json = r.json()
-    if json['status'] == 'OK':
-        rank = json['result'][0]['rank']
+    rjson = r.json()
+    if rjson['status'] == 'OK':
+        rank = rjson['result'][0]['rank']
         if rank:
             return True
     return False
