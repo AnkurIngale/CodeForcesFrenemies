@@ -32,7 +32,7 @@
     </div>
 
 {% if teams %}
-<table class = "table table-striped">
+<table class = "table table-bordered table-hover">
     <tr>
         <th class = "th-lg">
             Sr No.
@@ -67,7 +67,7 @@
         </th>
         <th class = "th-lg">
             <a href="#" title = "Click to get team stats" 
-                style="color:#00FF00;font-weight:bold;">=></a>
+                style="color:#66CC00;font-weight:bold;">Stats</a>
         </th>
         <th class = "th-lg">
             <a href="{% url 'delTeam' team.handle1 team.handle2 team.handle3 %}" title = "Click to remove this team" 

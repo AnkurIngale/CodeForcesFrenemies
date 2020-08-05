@@ -7,7 +7,7 @@
     </title>
 </head>
 <body>
-    <h1 class = "h1">
+    <h1 class = "h1" style = "color: #0078F9;">
         Welcome to Codeforces Frenemies.
     </h1>
     
@@ -18,7 +18,7 @@
         2. Go to "Problem Set" to view the problems and filter according to difficulty.
         <br><br>
         Also, you can create your own "Dream Teams" where you can make a team of three.<br>
-        Then, the website will give you the stats of the team and how well they MIGHT perform.
+        You can then get the stats of the teams and how well they MIGHT perform.
         <br>
     </p>
     {% if user.is_authenticated %}
@@ -39,7 +39,7 @@
         <a href = "{% url 'showSolvedProblems' %}">Problem Set</a>
     </div>
     <div>
-        <a href = "{% url 'createTeam' %}">Create Personal Team</a>
+        <a href = "{% url 'createTeam' %}">Create Personal Teams</a>
     </div>
     <div>
         <a href = "{% url 'logout' %}">Log Out</a>

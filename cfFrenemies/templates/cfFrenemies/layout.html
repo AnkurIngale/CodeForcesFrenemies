@@ -10,9 +10,24 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
+    <!-- Montserrat Font -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+    <style>
+      body
+      {
+        font-family: 'Montserrat';
+      }
+      table, th, td {
+        padding: 5px;
+      }
+      table {
+        border-spacing: 15px;
+      }
+    </style>
+
+    <!-- Checkbox onclick for create teams -->
     <script>
       function onCheckClick() {
-        console.log('Pikachu');
         var checkBox = document.getElementById("firstHandleIsUser");
         var handle1Text = document.getElementById("id_handle1");
         if (checkBox.checked){
@@ -27,6 +42,7 @@
       }
     </script>
 </head>
+
 <body style = "margin-top:5rem">
     <main role="main" class="container">
       <div class="row">

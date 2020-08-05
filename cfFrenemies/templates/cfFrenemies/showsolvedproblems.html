@@ -13,19 +13,19 @@
 
 <table>
     <tr>
-        <td class = "col-10">
-            <table class = "table-striped">
+        <td class = "col-lg-auto">
+            <table class = "table-hover">
                 <tr>
                     <th class = "col-sm-2">
                         #
                     </th>
-                    <th class = "col-6">
+                    <th class = "col-md-6">
                         Problem
                     </th>
-                    <th class = "col">
+                    <th class = "col-md-auto">
                         Tags
                     </th>
-                    <th class = "col">
+                    <th class = "col-md-auto">
                         Rating
                     </th>
                     <th class = "col-5">
@@ -37,15 +37,15 @@
                     <td class = "col">
                         <a href="{% url 'toProblem' problem.contestID problem.problemID %}" target = "_blank">{{ problem.index }}</a>
                     </td>
-                    <td class = "col-12">
+                    <td class = "col-md-6">
                         <a href="{% url 'toProblem' problem.contestID problem.problemID %}" target = "_blank">{{ problem.name }}</a>
                     </td>
-                    <td class = "col col-offset-2">
+                    <td class = "col-md-auto">
                         {% for tag in problem.tags %}
                         <span class = "text-muted btn btn-outline-primary btn-sm"><small>{{ tag }}</small></span>
                         {% endfor %}
                     </td>
-                    <td class = "col">
+                    <td class = "col-md-auto">
                         <strong>{{ problem.rating }}</strong>
                     </td>
                     <td class = "col-5">
@@ -59,15 +59,16 @@
                 {% endfor %}
             </table>
         </td>
-        <td class = "col-2 align-baseline">
+        <td class = "col-sm-auto align-baseline">
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">
                         Filter Problems
                     </h5>
                     <form method="GET" action = "{% url 'showSolvedProblems' %}" class = "form">
-                        <input type = "text" name = "lbr" class = "form-control" aria-label = "Small" placeholder = "Lower Rating Bound"/>
-                        <input type = "text" name = "hbr" class = "form-control" aria-label = "Small" placeholder = "Higher Rating Bound"/>
+                        <input type = "text" name = "lbr" class = "form-control" aria-label = "Small" placeholder = "Lower Rating Bound" value = "{{ request.GET.lbr }}"/>
+                        <input type = "text" name = "hbr" class = "form-control" aria-label = "Small" placeholder = "Higher Rating Bound" value = "{{ request.GET.hbr }}"/>
+                        <input type = "text" name = "tags" class = "form-control" aria-label = "Small" placeholder = "Tags (Use '|' to separate)" value = "{{ request.GET.tags }}"/>
                         <input type = "submit" class = "btn btn-primary align-center" value = "Filter" style = "margin-top: 1rem;"/>
                     </form>
                 </div>
@@ -79,14 +80,14 @@
 
 <ul class = "pagination">
     {% for page in paginator.page_range %}
-    {% if 'lbr' in request.GET or 'hbr' in request.GET %}
-    <li>
-        <a class = "page-link" href = "?lbr={{ request.GET.lbr }}&hbr={{ request.GET.hbr }}&page={{ page }}">{{ page }}</a>
-    </li>
+    {% if 'lbr' in request.GET or 'hbr' in request.GET or 'tags' in request.GET %}
+        <li>
+            <a class = "page-link" href = "?lbr={{ request.GET.lbr }}&hbr={{ request.GET.hbr }}&tags={{ request.GET.tags }}&page={{ page }}">{{ page }}</a>
+        </li>
     {% else %}
-    <li>
-        <a class = "page-link" href = "?page={{ page }}">{{ page }}</a>
-    </li>
+        <li>
+            <a class = "page-link" href = "?page={{ page }}">{{ page }}</a>
+        </li>
     {% endif %}
     {% endfor %}
 </ul>

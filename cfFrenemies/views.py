@@ -102,18 +102,44 @@ def showSolvedProblems(request):
             print('Retrieved from Cache')
 
         lowerBoundRating = request.GET.get('lbr', 0)
+        if lowerBoundRating == '':
+            lowerBoundRating = 0
+
         higherBoundRating = request.GET.get('hbr', 5000)
+        if higherBoundRating == '':
+            higherBoundRating = 5000
+        
+        filterTags = request.GET.get('tags', '')
 
         try:
     
             lowerBoundRating = int(lowerBoundRating)
             higherBoundRating = int(higherBoundRating)
             
+            filterTags = list(set(filterTags.split('|')))
+            for i in filterTags:
+                if i == '':
+                    filterTags.remove(i)
+
             to_remove = []
             for problem in problemSet:
                 if problem['rating'] < lowerBoundRating or problem['rating'] > higherBoundRating:
                     to_remove.append(problem)
-            
+                else:
+                    ok = False
+                    if len(filterTags):
+                        count = 0
+                        for tag in problem['tags']:
+                            if tag in filterTags:
+                                count += 1
+                        
+                        if count == len(filterTags):
+                            ok = True
+                    else:
+                        ok = True
+                    if not ok:
+                        to_remove.append(problem)
+
             for problem in to_remove:
                 problemSet.remove(problem)
 
