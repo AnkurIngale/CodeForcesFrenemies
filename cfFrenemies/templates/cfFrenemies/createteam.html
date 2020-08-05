@@ -10,11 +10,6 @@
             {% csrf_token %}
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4">Create Team</legend>
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="firstHandleIsUser" onclick="onCheckClick()">
-                    <label class="custom-control-label" for="firstHandleIsUser">Add you as team member?</label>
-                </div>
-                <br>
                 {{ form.as_p }}
                  <!-- #this form is obtained from auth_views, the inbuilt login views in django -->
             </fieldset>
@@ -57,7 +52,7 @@
             {{ forloop.counter }}
         </th>
         <th class = "th-lg">
-            {{ team.handle1 }}
+            {{ team.creator_user.handle }}
         </th>
         <th class = "th-lg">
             {{ team.handle2 }}
@@ -67,11 +62,11 @@
         </th>
         <th class = "th-lg">
             <a href="#" title = "Click to get team stats" 
-                style="color:#66CC00;font-weight:bold;">Stats</a>
+                style="font-weight:bold;">Contests</a>
         </th>
         <th class = "th-lg">
-            <a href="{% url 'delTeam' team.handle1 team.handle2 team.handle3 %}" title = "Click to remove this team" 
-                style="color:#FF0000;font-weight:bold;">X</a>
+            <a href="{% url 'delTeam' team.handle2 team.handle3 %}" title = "Click to remove this team" 
+                style="color:#FF0000;font-weight:bold;">&#10060</a>
         </th>
     </tr>
     {% endfor %}

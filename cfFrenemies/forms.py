@@ -81,21 +81,18 @@ class AddFriendForm(forms.Form):
         return c_handle
 
 class CreateTeamForm(forms.Form):
-    handle1 = forms.CharField(label = 'First Member Handle', widget=forms.TextInput)
     handle2 = forms.CharField(label = 'Second Member Handle', widget=forms.TextInput)
     handle3 = forms.CharField(label = 'Third Member Handle', widget=forms.TextInput)
 
     def clean(self):
         super().clean()
         c_handles = [
-            self.cleaned_data['handle1'], 
             self.cleaned_data['handle2'], 
             self.cleaned_data['handle3']
         ]
         c_handles.sort()
-        print(c_handles)
 
-        if len(set(c_handles)) < 3:
+        if len(set(c_handles)) < 2:
             raise forms.ValidationError('Same handles in different inputs.')
 
         for c_handle in c_handles:

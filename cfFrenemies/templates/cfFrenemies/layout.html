@@ -24,23 +24,6 @@
         border-spacing: 15px;
       }
     </style>
-
-    <!-- Checkbox onclick for create teams -->
-    <script>
-      function onCheckClick() {
-        var checkBox = document.getElementById("firstHandleIsUser");
-        var handle1Text = document.getElementById("id_handle1");
-        if (checkBox.checked){
-          {% if request.user %}
-            handle1Text.setAttribute("value", "{{ request.user.handle }}");
-            handle1Text.readOnly = true;
-          {% endif %}
-        } else {
-          handle1Text.setAttribute("value", "");;
-          handle1Text.readOnly = false;
-        }
-      }
-    </script>
 </head>
 
 <body style = "margin-top:5rem">

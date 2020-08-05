@@ -195,30 +195,30 @@ def createTeam(request):
             form = CreateTeamForm(request.POST)
             if form.is_valid():
                 handles = [
-                    form.cleaned_data.get('handle1'),
                     form.cleaned_data.get('handle2'),
                     form.cleaned_data.get('handle3')
                 ]
                 handles.sort()
-                try:
-                    user_team = User_Team.objects.get(
-                        creator_user = request.user, 
-                        handle1 = handles[0], 
-                        handle2 = handles[1], 
-                        handle3 = handles[2]
-                    )
-                except User_Team.DoesNotExist:
-                    user_team = User_Team(
-                        creator_user = request.user,
-                        handle1 = handles[0],
-                        handle2 = handles[1],
-                        handle3 = handles[2],
-                    )
-                    user_team.save()
-                    return redirect('createTeam')
-                else:
-                    messages.error(request , 'Team already created.')
 
+                if request.user.handle in handles:
+                    messages.error(request, 'Logged In user already in team.')
+                else:
+                    try:
+                        user_team = User_Team.objects.get(
+                            creator_user = request.user, 
+                            handle2 = handles[0], 
+                            handle3 = handles[1]
+                        )
+                    except User_Team.DoesNotExist:
+                        user_team = User_Team(
+                            creator_user = request.user,
+                            handle2 = handles[0],
+                            handle3 = handles[1],
+                        )
+                        user_team.save()
+                        return redirect('createTeam')
+                    else:
+                        messages.error(request , 'Team already created.')
         else:
             form = CreateTeamForm()
         return render(request, template_name = 'cfFrenemies/createteam.html', context = {'form': form, 'teams': User_Team.objects.all()})
@@ -226,11 +226,10 @@ def createTeam(request):
         redirect('login')
     pass
 
-def delTeam(request, handle1, handle2, handle3):
+def delTeam(request, handle2, handle3):
     if request.user.is_authenticated:
         team = User_Team.objects.get(
             creator_user = request.user,
-            handle1 = handle1,
             handle2 = handle2,
             handle3 = handle3,
         )

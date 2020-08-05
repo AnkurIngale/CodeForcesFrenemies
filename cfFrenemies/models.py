@@ -96,10 +96,9 @@ class User_Friend(models.Model):
 
 class User_Team(models.Model):
     creator_user = models.ForeignKey(User , on_delete=models.CASCADE , default = None)
-    handle1 = models.CharField(max_length = 100)
     handle2 = models.CharField(max_length = 100)
     handle3 = models.CharField(max_length = 100)
 
     def __str__(self):
-        a = [self.handle1, self.handle2, self.handle3]
+        a = [self.handle2, self.handle3]
         return ''.join(a)

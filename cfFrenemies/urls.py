@@ -14,5 +14,5 @@ urlpatterns = [
     path('delfriend/<friend_handle>', views.delFriend, name = 'delFriend'),
     path('logoutnin/',views.logoutnin, name = 'logoutnin'),
     path('createteam/' , views.createTeam, name = 'createTeam'),
-    path('delteam?<handle1>&<handle2>&<handle3>/' , views.delTeam, name = 'delTeam'),
+    path('delteam?<handle2>&<handle3>/' , views.delTeam, name = 'delTeam'),
 ]
