@@ -13,8 +13,8 @@
 
 <table>
     <tr>
-        <td class = "col-lg-auto">
-            <table class = "table-hover">
+        <td class = "col-12">
+            <table class = "table table-hover">
                 <tr>
                     <th class = "col-sm-2">
                         #
@@ -59,16 +59,16 @@
                 {% endfor %}
             </table>
         </td>
-        <td class = "col-sm-auto align-baseline">
+        <td class = "col-2 align-baseline">
             <div class="card" style="width: 18rem;">
                 <div class="card-body">
                     <h5 class="card-title">
                         Filter Problems
                     </h5>
                     <form method="GET" action = "{% url 'showSolvedProblems' %}" class = "form">
-                        <input type = "text" name = "lbr" class = "form-control" aria-label = "Small" placeholder = "Lower Rating Bound" value = "{{ request.GET.lbr }}"/>
-                        <input type = "text" name = "hbr" class = "form-control" aria-label = "Small" placeholder = "Higher Rating Bound" value = "{{ request.GET.hbr }}"/>
-                        <input type = "text" name = "tags" class = "form-control" aria-label = "Small" placeholder = "Tags (Use '|' to separate)" value = "{{ request.GET.tags }}"/>
+                        <input type = "text" name = "lbr" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Lower Rating Bound" value = "{{ request.GET.lbr }}"/>
+                        <input type = "text" name = "hbr" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Higher Rating Bound" value = "{{ request.GET.hbr }}"/>
+                        <input type = "text" name = "tags" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Tags (Use '|' to separate)" value = "{{ request.GET.tags }}"/>
                         <input type = "submit" class = "btn btn-primary align-center" value = "Filter" style = "margin-top: 1rem;"/>
                     </form>
                 </div>

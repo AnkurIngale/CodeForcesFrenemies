@@ -61,15 +61,8 @@ def login(request):
 
 
 def logout(request):
-    global problemDict
-    global listLastUpdated
-
     if request.user.is_authenticated:
         handle = request.user.handle
-
-        del problemDict[handle]
-        del listLastUpdated[handle]
-
         auth.logout(request)
         return render(request,'cfFrenemies/logout.html',context = {'handle':handle})
     else:
@@ -79,11 +72,9 @@ def toProblem(request, contestID, problemID):
     return redirect('https://codeforces.com/contest/' + contestID + '/problem/' + problemID)
 
 def showSolvedProblems(request):
-    
     if request.user.is_authenticated:
 
         handle = request.user.handle
-
         problemSet = cache.get(handle)
 
         if not problemSet:
