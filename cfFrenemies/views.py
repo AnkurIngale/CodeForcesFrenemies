@@ -5,7 +5,8 @@ from django.conf import settings
 from django.db import models
 from django.core.paginator import Paginator
 from django.core.cache import cache
-from .api import verifyHandle
+from django.core import signing
+from .api import verifyHandle, getUnattemptedContests
 from .addons import getAllProblemsNotSolvedByUserButSolvedByFriends
 from .models import User, User_Friend, User_Team
 from .forms import *
@@ -75,15 +76,16 @@ def showSolvedProblems(request):
     if request.user.is_authenticated:
 
         handle = request.user.handle
-        problemSet = cache.get(handle)
+        t_handle = handle + '?unsolvedproblems'
+        problemSet = cache.get(t_handle)
 
-        if not problemSet:
+        if not problemSet or request.GET.get('refresh'):
             data = getAllProblemsNotSolvedByUserButSolvedByFriends(request.user)
             if data[0]:
 
                 problemSet = data[1]
                 pjson = jsons.dump(problemSet)
-                cache.set(handle, pjson, settings.PROBLEMS_UPDATE_TIME)
+                cache.set(t_handle, pjson, settings.UPDATE_TIME)
                 print('Added in Cache')
 
             else:
@@ -174,7 +176,14 @@ def addFriend(request):
                 
         else:
             form = AddFriendForm()
-        return render(request,template_name = 'cfFrenemies/addfriend.html',context = {'form' : form , 'friends' : friends_till_now})
+        return render(
+            request, 
+            template_name = 'cfFrenemies/addfriend.html', 
+            context = {
+                'form': form, 
+                'friends': friends_till_now
+                }
+            )
     return redirect('login')
 
 def delFriend(request , friend_handle):
@@ -221,7 +230,24 @@ def createTeam(request):
                         messages.error(request , 'Team already created.')
         else:
             form = CreateTeamForm()
-        return render(request, template_name = 'cfFrenemies/createteam.html', context = {'form': form, 'teams': User_Team.objects.all()})
+        
+        teams = []
+
+        for team in User_Team.objects.all():
+            teams.append({
+                'team': team,
+                'encrypted': signing.dumps({'id' : team.id})
+            })
+
+        print(teams)
+        return render(
+            request, 
+            template_name = 'cfFrenemies/createteam.html', 
+            context = {
+                'form': form, 
+                'teams': teams
+                }
+            )
     else:
         redirect('login')
     pass
@@ -237,3 +263,60 @@ def delTeam(request, handle2, handle3):
         return redirect('createTeam')
     return redirect('login')
 
+def toContest(request, contestID):
+    return redirect('https://codeforces.com/contest/' + contestID)
+
+def showUnattemptedContests(request, team_encrypted_id):
+    if request.user.is_authenticated:
+        team_id = signing.loads(team_encrypted_id)['id']
+        team = User_Team.objects.get(id = team_id)
+
+        id = request.user.handle + str(team) + '?contestList'
+        contestList = cache.get(id)
+
+        if not contestList or request.GET.get('refresh'):
+            data = getUnattemptedContests([team.creator_user.handle, team.handle2, team.handle3])
+            if data[0]:
+                contestList = data[1]
+                cache.set(id, jsons.dump(contestList), settings.UPDATE_TIME)
+                print('Added in cache')
+            else:
+                return HttpResponse(
+                    'There might be some error or your team may have participated in all contests.' + 
+                    'Try with a different team.'
+                    )
+        else:
+            contestList = jsons.load(contestList)
+            print('Retrieved from cache')
+
+        filter_types = request.GET.get('types', '')
+        filter_types = list(set(filter_types.split('|')))
+        filter_types = [i.upper() for i in filter_types]
+
+        if '' in filter_types:
+            filter_types.remove('')
+        
+        if filter_types:
+            to_delete = []
+            for c_id, contest in contestList.items():
+                if contest['type'] not in filter_types:
+                    to_delete.append(c_id)
+
+            for c_id in to_delete:
+                del contestList[c_id]
+
+        paginator = Paginator( list(contestList.values()), per_page = 30)
+        page_number = request.GET.get('page', 1)
+        page = paginator.get_page(page_number)
+
+        return render(
+            request, 
+            template_name = 'cfFrenemies/showunattemptedcontests.html', 
+            context = {
+                'contestList': page.object_list, 
+                'paginator': paginator,
+                'team_encrypted': team_encrypted_id
+                }
+            )
+    else:
+        redirect('login')

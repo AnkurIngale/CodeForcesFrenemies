@@ -1,0 +1,72 @@
+{% extends "cfFrenemies/layout.html" %}
+{% block content %}
+<div>
+    <small>
+        <a href="{% url 'index' %}">Main Page</a>
+    </small>
+</div>
+
+{% if contestList %}
+<h1>
+    Contests
+</h1>
+
+<table>
+    <tr class = "d-flex">
+        <td class = "col-12">
+            <table class = "table table-hover">
+                <tr class = "d-flex">
+                    <th class = "th-lg">
+                        #
+                    </th>
+                    <th class = "col-6">
+                        Contest Title
+                    </th>
+                    <th class = "col">
+                        Contest Type
+                    </th>
+                </tr>
+                {% for contest in contestList %}
+                <tr class = "d-flex">
+                    <td class = "th-lg">
+                        <a href = "{% url 'toContest' contest.id %}" target = "_blank">
+                            {{ contest.id }}
+                        </a>
+                    </td>
+                    <td class = "col-10">
+                        <a href = "{% url 'toContest' contest.id %}" target = "_blank">
+                            {{ contest.name }}
+                        </a>
+                    </td>
+                    <td class = "col">
+                        {{ contest.type }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+        <td class = "col-4 align-baseline">
+            <div class="card" style="width: 20rem;">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        Filter Contests
+                    </h5>
+                    <form method="GET" action = "{% url 'showUnattemptedContests' team_encrypted %}" class = "form">
+                        <input type = "text" name = "types" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Types of Contests (Use '|' to separate)" value = "{{ request.GET.types }}"/>
+                        <input type = "submit" class = "btn btn-primary align-center" value = "Filter" style = "margin-top: 1rem;"/>
+                    </form>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+{% endif %}
+
+<ul class = "pagination">
+    {% for page in paginator.page_range %}
+        <li>
+            <a class = "page-link" href = "?page={{ page }}">{{ page }}</a>
+        </li>
+    {% endfor %}
+</ul>
+{% endblock content %}

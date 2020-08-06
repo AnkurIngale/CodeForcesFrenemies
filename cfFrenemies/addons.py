@@ -1,5 +1,6 @@
 from .models import User_Friend, User
-from .api import getSolvedProblems, Problem
+from django.conf import settings
+from .api import *
 
 def getSolvedProblemsFromAllFriends(user):
     friends = User_Friend.objects.filter(friend_of = user)
@@ -52,7 +53,7 @@ def getAllProblemsNotSolvedByUserButSolvedByFriends(user):
         for problem in to_delete:
             friends_problems.remove(problem)
         
-
         friends_problems = sorted(friends_problems , key = lambda x : len(x.solvedBy) , reverse = True)
         return [True , friends_problems]
     return [False , []]
+    

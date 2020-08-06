@@ -15,4 +15,6 @@ urlpatterns = [
     path('logoutnin/',views.logoutnin, name = 'logoutnin'),
     path('createteam/' , views.createTeam, name = 'createTeam'),
     path('delteam?<handle2>&<handle3>/' , views.delTeam, name = 'delTeam'),
+    path('showunattemptedcontests/<team_encrypted_id>' , views.showUnattemptedContests, name = 'showUnattemptedContests'),
+    path('tocontest/<contestID>/',views.toContest, name='toContest'),
 ]

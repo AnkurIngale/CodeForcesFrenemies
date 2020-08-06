@@ -45,3 +45,41 @@ def getSolvedProblems(handle):
         return [True, list(problemSet)]
     else:
         return [False, []]
+
+def getAllFinishedContests():
+    r = apicalls.get(settings.URL + 'contest.list?gym=false')
+    json = r.json()
+    contests = {}
+
+    if json['status'] == 'OK':
+        json = json['result']
+
+        for contest in json:
+            if contest['phase'] == 'FINISHED':
+                contests[contest['id']] = contest
+
+    return contests
+
+def getUnattemptedContests(handles):
+    contests = getAllFinishedContests()
+
+    for handle in handles:
+        r = apicalls.get(settings.URL + 'user.status?handle=' + handle)
+        json = r.json()
+
+        if json['status'] == 'OK':
+            json = json['result']
+            for eachSub in json:
+                pjson = eachSub['problem']
+                try:
+                    contestID = pjson['contestId']
+                    if contestID in contests:
+                        del contests[contestID]
+                except KeyError:
+                    # understand this error.
+                    pass
+    
+    if contests:
+        return (True, contests)
+    else:
+        return (False, {})
