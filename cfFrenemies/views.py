@@ -77,37 +77,39 @@ def showSolvedProblems(request):
 
         handle = request.user.handle
         t_handle = handle + '?unsolvedproblems'
+
         problemSet = cache.get(t_handle)
 
-        if not problemSet or request.GET.get('refresh'):
+        if not problemSet or request.GET.get('refresh', None):
             data = getAllProblemsNotSolvedByUserButSolvedByFriends(request.user)
             if data[0]:
-
-                problemSet = data[1]
-                pjson = jsons.dump(problemSet)
-                cache.set(t_handle, pjson, settings.UPDATE_TIME)
+                problemSet = jsons.dump(data[1])
+                cache.set(t_handle, problemSet, settings.UPDATE_TIME)
                 print('Added in Cache')
-
             else:
                 return HttpResponse('Either we could not load data or you are all caught up. Try adding more friends.')
         else:
-            problemSet = jsons.load(problemSet)
             print('Retrieved from Cache')
 
-        lowerBoundRating = request.GET.get('lbr', 0)
-        if lowerBoundRating == '':
-            lowerBoundRating = 0
-
-        higherBoundRating = request.GET.get('hbr', 5000)
-        if higherBoundRating == '':
-            higherBoundRating = 5000
-        
-        filterTags = request.GET.get('tags', '')
+        problemSet = jsons.load(problemSet)
 
         try:
-    
+            lowerBoundRating = request.GET.get('lbr', 0)
+            if lowerBoundRating == '':
+                lowerBoundRating = 0
+
+            higherBoundRating = request.GET.get('hbr', 5000)
+            if higherBoundRating == '':
+                higherBoundRating = 5000
+            
+            filterTags = request.GET.get('tags', '')
+
+
+        
             lowerBoundRating = int(lowerBoundRating)
             higherBoundRating = int(higherBoundRating)
+
+            print(lowerBoundRating, higherBoundRating)
             
             filterTags = list(set(filterTags.split('|')))
             for i in filterTags:
@@ -132,12 +134,12 @@ def showSolvedProblems(request):
                         ok = True
                     if not ok:
                         to_remove.append(problem)
-
+            print(len(to_remove))
             for problem in to_remove:
                 problemSet.remove(problem)
-
         except:
             pass
+        
 
         paginator = Paginator(problemSet, per_page = 30)
         page_number = request.GET.get('page', 1)
@@ -233,7 +235,7 @@ def createTeam(request):
         
         teams = []
 
-        for team in User_Team.objects.all():
+        for team in User_Team.objects.filter(creator_user = request.user):
             teams.append({
                 'team': team,
                 'encrypted': signing.dumps({'id' : team.id})
