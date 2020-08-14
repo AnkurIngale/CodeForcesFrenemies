@@ -65,7 +65,7 @@
                     <h5 class="card-title">
                         Filter Problems
                     </h5>
-                    <form method="GET" action = "{% url 'showSolvedProblems' %}" class = "form">
+                    <form method="GET" action = "{% url 'showUnsolvedProblems' %}" class = "form">
                         <input type = "text" name = "lbr" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Lower Rating Bound" value = "{{ request.GET.lbr }}"/>
                         <input type = "text" name = "hbr" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Higher Rating Bound" value = "{{ request.GET.hbr }}"/>
                         <input type = "text" name = "tags" class = "form-control form-control-sm" aria-label = "Small" placeholder = "Tags (Use '|' to separate)" value = "{{ request.GET.tags }}"/>

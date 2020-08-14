@@ -72,7 +72,7 @@ def logout(request):
 def toProblem(request, contestID, problemID):
     return redirect('https://codeforces.com/contest/' + contestID + '/problem/' + problemID)
 
-def showSolvedProblems(request):
+def showUnsolvedProblems(request):
     if request.user.is_authenticated:
 
         handle = request.user.handle
@@ -147,7 +147,7 @@ def showSolvedProblems(request):
 
         return render(
             request, 
-            template_name = 'cfFrenemies/showsolvedproblems.html', 
+            template_name = 'cfFrenemies/showunsolvedproblems.html', 
             context = {
                 'problemList' : page.object_list,
                 'paginator': paginator
@@ -170,9 +170,12 @@ def addFriend(request):
                 try:
                     user_friend = User_Friend.objects.get(friend_handle = handle , friend_of = request.user)
                 except User_Friend.DoesNotExist:
-                    friend = User_Friend(friend_handle = handle , friend_of = request.user)
-                    friend.save()
-                    return redirect('addFriend')
+                    if len(friends_till_now) < settings.MAX_USER_FRIEND_LIMIT:
+                        friend = User_Friend(friend_handle = handle , friend_of = request.user)
+                        friend.save()
+                        return redirect('addFriend')
+                    else:
+                        messages.error(request , 'Maximum limit of ' + str(settings.MAX_USER_FRIEND_LIMIT) + ' reached.')
                 else:
                     messages.error(request , 'Handle already added.')
                 

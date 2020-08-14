@@ -26,14 +26,24 @@
         </form>
         <div class="border-top pt-3">
             <ul class='friend_handle'>
+                <table>
                 {% for friend in friends %}
-                <li>
-                    <a href="https://codeforces.com/profile/{{ friend }}" title = "Click to view profile"
-                    target="_blank" style="color:black;">{{ friend }}</a>
-                    <a href="{% url 'delFriend' friend %}" title = "Click to remove this handle" 
-                    style="color:#FF0000;font-weight:bold;">&#10060</a>
-                </li>
+                <tr>
+                    <td>
+                        <li>
+                            <a href="https://codeforces.com/profile/{{ friend }}" 
+                            title = "Click to view profile"
+                            target="_blank" style="color:black;">{{ friend }}</a>
+                        </td>
+                    </li>
+                    <td>
+                        <a href="{% url 'delFriend' friend %}" 
+                        title = "Click to remove this handle" 
+                        style="color:#FF0000;font-weight:bold;">&#10060</a>
+                    </td>
+                </tr>
                 {% endfor %}
+                </table>
             </ul>
         </div>
 </div>
